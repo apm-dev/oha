@@ -6,7 +6,7 @@ import (
 
 	"github.com/apm-dev/oha/src/domain"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 type userRepo struct {
@@ -45,7 +45,7 @@ func (r *userRepo) Insert(ctx context.Context, user *domain.User) error {
 		return errors.Wrap(domain.ErrDatabase, "failed to insert user into DB")
 	}
 	if rows > 1 {
-		logrus.Warnf("%s expected to affect 1 row, affected %d", op, rows)
+		log.Warnf("%s expected to affect 1 row, affected %d", op, rows)
 	}
 	return nil
 }

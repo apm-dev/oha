@@ -1,0 +1,3 @@
+app:
+  log-level: "debug"
+  web-port: 8000
