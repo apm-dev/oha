@@ -40,8 +40,8 @@ func (_m *UserRepository) FindByID(ctx context.Context, id string) (*domain.User
 	return r0, r1
 }
 
-// Save provides a mock function with given fields: ctx, user
-func (_m *UserRepository) Save(ctx context.Context, user *domain.User) error {
+// Insert provides a mock function with given fields: ctx, user
+func (_m *UserRepository) Insert(ctx context.Context, user *domain.User) error {
 	ret := _m.Called(ctx, user)
 
 	var r0 error

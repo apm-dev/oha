@@ -8,19 +8,19 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type Service struct {
+type service struct {
 	userRepo domain.UserRepository
 }
 
 func NewService(
 	ur domain.UserRepository,
 ) domain.UserService {
-	return &Service{
+	return &service{
 		userRepo: ur,
 	}
 }
 
-func (s *Service) AddNewUser(ctx context.Context, name string) (*domain.User, error) {
+func (s *service) AddNewUser(ctx context.Context, name string) (*domain.User, error) {
 	const op = "user.service.AddNewUser"
 
 	user, err := domain.NewUser(name)
@@ -31,7 +31,7 @@ func (s *Service) AddNewUser(ctx context.Context, name string) (*domain.User, er
 		return nil, err
 	}
 
-	err = s.userRepo.Save(ctx, user)
+	err = s.userRepo.Insert(ctx, user)
 	if err != nil {
 		log.Errorf("%s failed to persist user, err: '%s'", op, err)
 		return nil, errors.Wrap(domain.ErrInternalServer, "failed to add the user")
@@ -39,7 +39,7 @@ func (s *Service) AddNewUser(ctx context.Context, name string) (*domain.User, er
 	return user, nil
 }
 
-func (s *Service) GetUserByID(ctx context.Context, id string) (*domain.User, error) {
+func (s *service) GetUserByID(ctx context.Context, id string) (*domain.User, error) {
 	const op = "user.service.GetUserByID"
 
 	user, err := s.userRepo.FindByID(ctx, id)

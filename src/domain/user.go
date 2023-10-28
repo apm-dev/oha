@@ -18,7 +18,7 @@ type UserService interface {
 }
 
 type UserRepository interface {
-	Save(ctx context.Context, user *User) error
+	Insert(ctx context.Context, user *User) error
 	FindByID(ctx context.Context, id string) (*User, error)
 }
 
