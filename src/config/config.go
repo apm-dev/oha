@@ -11,7 +11,8 @@ import (
 )
 
 type Config struct {
-	App ApplicationConfig
+	App      ApplicationConfig
+	Database DatabaseConfig
 }
 
 func NewConfig() *Config {
@@ -30,6 +31,7 @@ func NewConfig() *Config {
 		}
 	}
 
+	config.Database.parse()
 	config.App.parse()
 
 	return config
@@ -51,6 +53,22 @@ func (c *ApplicationConfig) parse() {
 	c.HttpPathPrefix = viperGetOrDefault("app.http-path-prefix", "")
 	c.DatabaseConnTimeout = viperGetOrDefaultTimeDuration("app.outgoing-request-timeout", "15s")
 	c.LogLevel = viperGetOrDefault("app.log-level", "debug")
+}
+
+type DatabaseConfig struct {
+	Host     string
+	Port     uint64
+	User     string
+	Password string
+	DB       string
+}
+
+func (c *DatabaseConfig) parse() {
+	c.Host = viperGetOrDefault("database.host", "127.0.0.1")
+	c.Port = viperGetOrDefaultUint64("database.port", 5432)
+	c.User = viperGetOrDefault("database.user", "postgres")
+	c.Password = viperGetOrDefault("database.password", "12345")
+	c.DB = viperGetOrDefault("database.db", "oha")
 }
 
 func viperGetOrDefault(key string, defaultValue string) string {
