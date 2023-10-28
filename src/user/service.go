@@ -37,5 +37,15 @@ func (s *Service) AddNewUser(ctx context.Context, name string) (*domain.User, er
 }
 
 func (s *Service) GetUserByID(ctx context.Context, id string) (*domain.User, error) {
-	panic("not implemented") // TODO: Implement
+	const op = "user.service.GetUserByID"
+
+	user, err := s.userRepo.FindByID(ctx, id)
+	if err != nil {
+		log.Errorf("%s failed to fetch user from DB, err: '%s'", op, err)
+		return nil, errors.Wrap(domain.ErrInternalServer, "failed to find the user")
+	}
+	if user == nil {
+		return nil, errors.Wrapf(domain.ErrNotFound, "there is no user with this id '%s'", id)
+	}
+	return user, nil
 }
