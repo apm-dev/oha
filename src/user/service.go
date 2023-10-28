@@ -24,8 +24,11 @@ func (s *Service) AddNewUser(ctx context.Context, name string) (*domain.User, er
 	const op = "user.service.AddNewUser"
 
 	user, err := domain.NewUser(name)
-	if !errors.Is(err, domain.ErrInvalidArgument) {
-		log.Errorf("%s failed to create a user, err: '%s'", op, err)
+	if err != nil {
+		if !errors.Is(err, domain.ErrInvalidArgument) {
+			log.Errorf("%s failed to create a user, err: '%s'", op, err)
+		}
+		return nil, err
 	}
 
 	err = s.userRepo.Save(ctx, user)

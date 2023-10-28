@@ -30,7 +30,7 @@ func NewUser(name string) (*User, error) {
 	user := &User{
 		Name: name,
 	}
-	if ok := user.TryGenerateId(); !ok {
+	if ok := user.TryGenerateID(); !ok {
 		return nil, errors.Wrap(ErrInternalServer, "failed to generate ID for user")
 	}
 	return user, nil
@@ -40,7 +40,7 @@ func (u *User) IsNew() bool {
 	return len(u.ID) <= 0
 }
 
-func (u *User) TryGenerateId() bool {
+func (u *User) TryGenerateID() bool {
 	if u.IsNew() {
 		u.ID = uuid.New().String()
 		return true
