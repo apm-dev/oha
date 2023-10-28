@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
 
 type User struct {
@@ -22,6 +23,19 @@ type UserRepository interface {
 }
 
 // Domain Logics
+func NewUser(name string) (*User, error) {
+	if len(name) < 3 {
+		return nil, errors.Wrap(ErrInvalidArgument, "'name' length should be at least 3 characters")
+	}
+	user := &User{
+		Name: name,
+	}
+	if ok := user.TryGenerateId(); !ok {
+		return nil, errors.Wrap(ErrInternalServer, "failed to generate ID for user")
+	}
+	return user, nil
+}
+
 func (u *User) IsNew() bool {
 	return len(u.ID) <= 0
 }
