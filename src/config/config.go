@@ -4,7 +4,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -42,16 +41,13 @@ type ApplicationConfig struct {
 	WebPort        uint
 	HttpPathPrefix string
 
-	DatabaseConnTimeout time.Duration
-
 	LogLevel string
 }
 
 func (c *ApplicationConfig) parse() {
 	c.ServiceName = viperGetOrDefault("app.service-name", "OHA")
 	c.WebPort = viperGetOrDefaultUint("app.web-port", 8000)
-	c.HttpPathPrefix = viperGetOrDefault("app.http-path-prefix", "")
-	c.DatabaseConnTimeout = viperGetOrDefaultTimeDuration("app.outgoing-request-timeout", "15s")
+	c.HttpPathPrefix = viperGetOrDefault("app.http-path-prefix", "/api/v1")
 	c.LogLevel = viperGetOrDefault("app.log-level", "debug")
 }
 
@@ -79,13 +75,4 @@ func viperGetOrDefault(key string, defaultValue string) string {
 func viperGetOrDefaultUint(key string, defaultValue uint64) uint {
 	viper.SetDefault(key, defaultValue)
 	return viper.GetUint(key)
-}
-
-func viperGetOrDefaultTimeDuration(key string, defaultValue string) time.Duration {
-	viper.SetDefault(key, defaultValue)
-	d, err := time.ParseDuration(viper.GetString(key))
-	if err != nil {
-		log.Fatalf("provided value '%s' cannot be transformed to [time.Duration]", viper.GetString(key))
-	}
-	return d
 }
