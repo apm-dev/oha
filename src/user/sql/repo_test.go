@@ -7,7 +7,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/apm-dev/oha/src/domain"
-	"github.com/apm-dev/oha/src/user/usersql"
+	"github.com/apm-dev/oha/src/user/sql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

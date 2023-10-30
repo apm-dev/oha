@@ -10,7 +10,7 @@ import (
 	"github.com/apm-dev/oha/src/pkg/dbutils"
 	"github.com/apm-dev/oha/src/user"
 	userhttp "github.com/apm-dev/oha/src/user/http"
-	"github.com/apm-dev/oha/src/user/usersql"
+	"github.com/apm-dev/oha/src/user/sql"
 	log "github.com/sirupsen/logrus"
 )
 
