@@ -6,11 +6,11 @@ import (
 	"syscall"
 
 	"github.com/apm-dev/oha/src/config"
-	"github.com/apm-dev/oha/src/database"
 	"github.com/apm-dev/oha/src/httpserver"
+	"github.com/apm-dev/oha/src/pkg/dbutils"
 	"github.com/apm-dev/oha/src/user"
 	userhttp "github.com/apm-dev/oha/src/user/http"
-	_userRepo "github.com/apm-dev/oha/src/user/sql"
+	"github.com/apm-dev/oha/src/user/usersql"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -22,12 +22,20 @@ func main() {
 	log.SetLevel(logLevel)
 
 	// Database
-	database.ApplyDatabaseMigrations(config)
-	db, err := database.NewConnection(config)
+	dbconfig := &dbutils.PostgresConfig{
+		Host:             config.Database.Host,
+		Port:             config.Database.Port,
+		User:             config.Database.User,
+		Passwd:           config.Database.Password,
+		DB:               config.Database.DB,
+		MigrationPathURL: "file://migrations",
+	}
+	dbutils.ApplyPgsqlDatabaseMigrations(dbconfig)
+	db, err := dbutils.NewPgsqlConnection(dbconfig)
 	noError(err)
 
 	// Repository
-	userRepo := _userRepo.NewUserRepo(db)
+	userRepo := usersql.NewUserRepo(db)
 
 	// Service
 	userSvc := user.NewService(userRepo)

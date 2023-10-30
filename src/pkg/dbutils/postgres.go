@@ -1,10 +1,9 @@
-package database
+package dbutils
 
 import (
 	"database/sql"
 	"fmt"
 
-	"github.com/apm-dev/oha/src/config"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -12,12 +11,22 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NewConnection(config *config.Config) (*sql.DB, error) {
-	psqlconn := fmt.Sprintf(
+type PostgresConfig struct {
+	Host   string
+	Port   uint
+	User   string
+	Passwd string
+	DB     string
+	// MigrationPathURL in form of file://migrations
+	MigrationPathURL string
+}
+
+func NewPgsqlConnection(config *PostgresConfig) (*sql.DB, error) {
+	pgsqlConn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		config.Database.Host, config.Database.Port, config.Database.User, config.Database.Password, config.Database.DB,
+		config.Host, config.Port, config.User, config.Passwd, config.DB,
 	)
-	db, err := sql.Open("postgres", psqlconn)
+	db, err := sql.Open("postgres", pgsqlConn)
 	if err != nil {
 		return nil, err
 	}
@@ -28,19 +37,19 @@ func NewConnection(config *config.Config) (*sql.DB, error) {
 	return db, nil
 }
 
-func ApplyDatabaseMigrations(config *config.Config) {
+func ApplyPgsqlDatabaseMigrations(config *PostgresConfig) {
 	log.Infof("going to apply database migrations")
 	databaseURL := fmt.Sprintf(
 		"postgresql://%s:%d/%s?user=%s&password=%s&sslmode=disable",
-		config.Database.Host, config.Database.Port, config.Database.DB, config.Database.User, config.Database.Password,
+		config.Host, config.Port, config.DB, config.User, config.Passwd,
 	)
-	m, err := migrate.New("file://migrations", databaseURL)
+	m, err := migrate.New(config.MigrationPathURL, databaseURL)
 	if err != nil {
-		log.Fatalf("can't init migration '%s'", err)
+		log.Fatalf("can't init migration '%v'", err)
 	}
 	err = m.Up()
 	if err != nil && err.Error() != "no change" {
-		log.Fatalf("unable to apply migrations '%s'", err)
+		log.Fatalf("unable to apply migrations '%v'", err)
 	}
 	_, _ = m.Close()
 	log.Infof("all database migrations has been successfully applied")
