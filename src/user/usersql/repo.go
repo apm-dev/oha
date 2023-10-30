@@ -1,4 +1,4 @@
-package sql
+package usersql
 
 import (
 	"context"
@@ -21,7 +21,7 @@ func NewUserRepo(db *sql.DB) domain.UserRepository {
 
 func (r *userRepo) FindByID(ctx context.Context, id string) (*domain.User, error) {
 	var user domain.User
-	err := r.db.QueryRowContext(ctx, "SELECT * FROM users WHERE id=$1", id).
+	err := r.db.QueryRowContext(ctx, "SELECT id, name, created_at, updated_at FROM users WHERE id=$1", id).
 		Scan(&user.ID, &user.Name, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
