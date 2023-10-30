@@ -1,38 +1,35 @@
-package http
+package userhttp
 
 import (
 	"net/http"
 
 	"github.com/apm-dev/oha/src/domain"
-	"github.com/apm-dev/oha/src/httputils"
+	"github.com/apm-dev/oha/src/pkg/httputils"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 )
 
-type userController struct {
+type UserController struct {
 	userSvc   domain.UserService
 	validator *validator.Validate
 }
 
-func RegisterUserHandlers(
+func NewUserController(
 	us domain.UserService,
-	r *mux.Router,
-) {
-	c := &userController{
+) *UserController {
+	return &UserController{
 		userSvc:   us,
 		validator: validator.New(),
 	}
-	r.Methods(http.MethodPost).Path("/users").HandlerFunc(c.createUser)
-	r.Methods(http.MethodGet).Path("/users/{id}").HandlerFunc(c.getUserByID)
 }
 
-func (c *userController) getUserByID(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	req := &GetUserByIDRequest{
 		ID: params["id"],
 	}
-	err := c.validator.Struct(params)
+	err := c.validator.Struct(req)
 	if err != nil {
 		err = errors.Wrap(domain.ErrInvalidArgument, err.Error())
 		httputils.RespondWithErrJson(w, err, "getUserByID", "", nil)
@@ -46,7 +43,7 @@ func (c *userController) getUserByID(w http.ResponseWriter, r *http.Request) {
 	httputils.RespondWithStructJSON(w, http.StatusOK, user)
 }
 
-func (c *userController) createUser(w http.ResponseWriter, r *http.Request) {
+func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var req CreateUserRequest
 	err := httputils.ReadRequestBody(r, c.validator, &req, false)
 	if err != nil {
@@ -54,7 +51,7 @@ func (c *userController) createUser(w http.ResponseWriter, r *http.Request) {
 		httputils.RespondWithErrJson(w, err, "createUser", "", nil)
 		return
 	}
-	user, err := c.userSvc.GetUserByID(r.Context(), req.Name)
+	user, err := c.userSvc.AddNewUser(r.Context(), req.Name)
 	if err != nil {
 		httputils.RespondWithErrJson(w, err, "createUser", "", nil)
 		return

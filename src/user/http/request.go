@@ -1,4 +1,4 @@
-package http
+package userhttp
 
 type GetUserByIDRequest struct {
 	ID string `json:"id" validate:"required,uuid"`
