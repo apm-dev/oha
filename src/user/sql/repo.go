@@ -21,7 +21,8 @@ func NewUserRepo(db *sql.DB) domain.UserRepository {
 
 func (r *userRepo) FindByID(ctx context.Context, id string) (*domain.User, error) {
 	var user domain.User
-	err := r.db.QueryRowContext(ctx, "SELECT * FROM users WHERE id=?", id).Scan(&user)
+	err := r.db.QueryRowContext(ctx, "SELECT * FROM users WHERE id=$1", id).
+		Scan(&user.ID, &user.Name, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -33,7 +34,7 @@ func (r *userRepo) FindByID(ctx context.Context, id string) (*domain.User, error
 
 func (r *userRepo) Insert(ctx context.Context, user *domain.User) error {
 	const op = "user.repo.sql.Insert"
-	res, err := r.db.ExecContext(ctx, "INSERT INTO users (id,name) VALUES (?,?)", user.ID, user.Name)
+	res, err := r.db.ExecContext(ctx, "INSERT INTO users (id,name) VALUES ($1,$2);", user.ID, user.Name)
 	if err != nil {
 		return err
 	}

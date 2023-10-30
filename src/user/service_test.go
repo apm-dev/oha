@@ -42,7 +42,7 @@ func Test_AddNewUser(t *testing.T) {
 				name: "Amir",
 			},
 			prepareMocks: func(m *Mocks) {
-				m.ur.On("Save", mock.Anything, mock.Anything).
+				m.ur.On("Insert", mock.Anything, mock.Anything).
 					Return(errors.New("some db error")).Once()
 			},
 			expectResult: nil,
@@ -54,7 +54,7 @@ func Test_AddNewUser(t *testing.T) {
 				name: "Parsa",
 			},
 			prepareMocks: func(m *Mocks) {
-				m.ur.On("Save", mock.Anything, mock.Anything).
+				m.ur.On("Insert", mock.Anything, mock.Anything).
 					Return(nil).Once()
 			},
 			expectResult: &domain.User{
