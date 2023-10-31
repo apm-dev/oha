@@ -44,7 +44,7 @@ $ make run
 # check if the containers are running
 $ docker ps
 # See the logs
-docker logs --follow oha
+$ docker logs --follow oha
 # test create user endpoint
 $ curl -X POST 'localhost:8000/api/v1/users' --data-raw '{"name": "Amir"}'
 # see created user
