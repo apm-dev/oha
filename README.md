@@ -1,6 +1,12 @@
 <div align="center"><img src="./docs/images/logo.png" alt="OHA" /></div>
 <br/>
-<h1 align="center">Maintainable Go repository based on Clean Architecture</h1>
+<h1 align="center">Maintainable Go repository based on Clean Architecture
+<div align="center">
+<img src="https://img.shields.io/badge/Go-1.20+-00ADD8?logo=go" />
+<img src="https://img.shields.io/badge/code_coverage-90%25-success?logo=none" />
+<img src="https://img.shields.io/github/license/elangosundar/awesome-README-templates?color=2b9348" />
+</div>
+</h1>
 
 ### 📜 Description
 This Project Implemented Based on Clean Architecture in Golang.
