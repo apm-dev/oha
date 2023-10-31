@@ -16,5 +16,7 @@ go.work
 
 .idea/*
 .vscode/
+.DS_Store
 
 engine
+oha
